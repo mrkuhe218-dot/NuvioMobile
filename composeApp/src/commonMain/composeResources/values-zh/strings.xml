@@ -1677,6 +1677,7 @@
     <string name="streams_active_scrapers">活跃抓取器</string>
     <string name="streams_checking_more_addons">正在检查更多插件…</string>
     <string name="streams_copy_link">复制播放链接</string>
+    <string name="streams_copy_magnet">复制磁力链</string>
     <string name="streams_download_file">下载文件</string>
     <string name="streams_open_external_player">在外部播放器中打开</string>
     <string name="streams_open_internal_player">在内部播放器中打开</string>
@@ -1710,6 +1711,7 @@
     <string name="streams_loading_skip_segments">正在加载片头/片尾片段…</string>
     <string name="streams_finding_streams">正在查找播放源…</string>
     <string name="streams_link_copied">播放链接已复制</string>
+    <string name="streams_magnet_copied">磁力链已复制</string>
     <string name="streams_no_direct_link">无可用的直接播放链接</string>
     <string name="streams_no_metadata">无元数据</string>
     <string name="streams_refresh">刷新播放源</string>

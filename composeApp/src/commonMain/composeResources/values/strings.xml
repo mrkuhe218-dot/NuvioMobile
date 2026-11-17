@@ -1677,6 +1677,7 @@
     <string name="streams_active_scrapers">Active scrapers</string>
     <string name="streams_checking_more_addons">Checking more addons…</string>
     <string name="streams_copy_link">Copy stream link</string>
+    <string name="streams_copy_magnet">Copy magnet link</string>
     <string name="streams_download_file">Download file</string>
     <string name="streams_open_external_player">Open in external player</string>
     <string name="streams_open_internal_player">Open in internal player</string>
@@ -1710,6 +1711,7 @@
     <string name="streams_loading_skip_segments">Loading intro/outro segments…</string>
     <string name="streams_finding_streams">Finding streams…</string>
     <string name="streams_link_copied">Stream link copied</string>
+    <string name="streams_magnet_copied">Magnet link copied</string>
     <string name="streams_no_direct_link">No direct stream link available</string>
     <string name="streams_no_metadata">No metadata available</string>
     <string name="streams_refresh">Refresh streams</string>

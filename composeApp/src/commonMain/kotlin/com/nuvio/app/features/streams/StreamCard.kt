@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -36,13 +37,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.nuvio.app.core.ui.NuvioToastController
 import com.nuvio.app.core.ui.SkeletonBlock
 import com.nuvio.app.features.debrid.DebridProviders
+import nuvio.composeapp.generated.resources.Res
+import nuvio.composeapp.generated.resources.streams_copy_magnet
+import nuvio.composeapp.generated.resources.streams_magnet_copied
+import org.jetbrains.compose.resources.stringResource
 
 internal val LocalStreamHighlight = staticCompositionLocalOf<(StreamItem) -> String?> { { null } }
 
@@ -72,6 +81,14 @@ internal fun StreamCard(
     val cardShape = RoundedCornerShape(12.dp)
     val badgeImages = stream.badges.filter { it.imageURL.isNotBlank() }
     val hasBadges = badgeImages.isNotEmpty() || (showFileSizeBadges && stream.behaviorHints.videoSize != null)
+    // Magnet copy: only torrent streams carry an infoHash. p2pInfoHash already
+    // covers infoHash, clientResolve.infoHash and the btih from a magnet/torrent URL.
+    val clipboardManager = LocalClipboardManager.current
+    val copyMagnetLabel = stringResource(Res.string.streams_copy_magnet)
+    val magnetCopiedText = stringResource(Res.string.streams_magnet_copied)
+    val magnetLink = remember(stream) {
+        stream.p2pInfoHash?.takeIf { it.isNotBlank() }?.let { "magnet:?xt=urn:btih:$it" }
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -107,7 +124,7 @@ internal fun StreamCard(
                 onLongClick = onLongClick,
             )
             .padding(14.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         Column(modifier = Modifier.weight(1f)) {
             if (hasBadges && badgePlacement == StreamBadgePlacement.TOP) {
@@ -186,6 +203,42 @@ internal fun StreamCard(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+            }
+        }
+
+        // Copy-magnet pill, top-right of the card. Shown only when this stream
+        // has an infoHash. Its own combinedClickable consumes the tap (and a
+        // long-press) so tapping it never triggers the card's play onClick.
+        if (magnetLink != null) {
+            Spacer(modifier = Modifier.width(12.dp))
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .combinedClickable(
+                            onClick = {
+                                clipboardManager.setText(AnnotatedString(magnetLink))
+                                NuvioToastController.show(magnetCopiedText)
+                            },
+                            onLongClick = {},
+                            role = Role.Button,
+                        )
+                        .padding(horizontal = 12.dp, vertical = 9.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = copyMagnetLabel,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
         }
     }
